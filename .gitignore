@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs/2DGameEngine/FileContentIndex
+/.vs/2DGameEngine/v17
+*.sln
+/2DGameEngine/2DGameEngine.vcxproj
+/2DGameEngine/2DGameEngine.vcxproj.filters
+/2DGameEngine/2DGameEngine.vcxproj.user
