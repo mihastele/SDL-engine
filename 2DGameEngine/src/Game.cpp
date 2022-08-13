@@ -25,8 +25,10 @@ void Game::Initialize() {
 	// populating structs data by passing it by reference, so the function modifies it
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	// properties populated, so now we can access them
-	windowWidth = displayMode.w;
-	windowHeight = displayMode.h;
+	// prevent the fake full screen to be fair play on the different resolution sizes
+	windowWidth = 800;// displayMode.w;
+	windowHeight = 600; // displayMode.h;
+	// this is fake fullscreen due to not using the fullscreen mode, but just using the screen size without borders.
 
 	// instead of copying entire thing to memory, it only stores the address of the struct
 	window = SDL_CreateWindow("Game made by the 2D Engine of Miha Stele",
@@ -46,6 +48,8 @@ void Game::Initialize() {
 		std::cerr << "Error creating SDL renderer." << std::endl;
 		return;
 	}
+
+	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
 	isRunning = true;
 }
