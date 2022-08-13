@@ -3,6 +3,7 @@
 #include "Game.h" // sibling file in this folder
 #include <iostream>
 #include <SDL.h>
+#include <SDL_image.h>
 
 // scope resolution::contructor method
 Game::Game() {
@@ -26,8 +27,10 @@ void Game::Initialize() {
 	SDL_GetCurrentDisplayMode(0, &displayMode);
 	// properties populated, so now we can access them
 	// prevent the fake full screen to be fair play on the different resolution sizes
-	windowWidth = 800;// displayMode.w;
-	windowHeight = 600; // displayMode.h;
+	// windowWidth = 800;// displayMode.w;
+	// windowHeight = 600; // displayMode.h;
+	windowWidth = displayMode.w;
+	windowHeight =  displayMode.h;
 	// this is fake fullscreen due to not using the fullscreen mode, but just using the screen size without borders.
 
 	// instead of copying entire thing to memory, it only stores the address of the struct
@@ -49,12 +52,48 @@ void Game::Initialize() {
 		return;
 	}
 
-	SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+	// TODO enable comment below for the fullscren when stop debugging
+	// SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
 	isRunning = true;
 }
 
+
+void Game::Setup() {
+
+}
+
+void Game::Update() {
+
+}
+
+void Game::Render() {
+	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
+	SDL_RenderClear(renderer);
+
+
+	// SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+	// SDL_Rect player = { 10, 10, 20, 20 };
+	// SDL_RenderFillRect(renderer, &player);
+
+	// Core SDL lib only knows how to decode bmp, so we need to use SDL image library
+	SDL_Surface* surface = IMG_Load("./assets/images/tank-tiger-right.png");
+	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+
+	SDL_Rect dstRect = {10, 10, 32, 32}; // Where we want to paste the picture
+	SDL_RenderCopy(renderer, texture, NULL, &dstRect); // srcRect is null because we don't want a portion of the image
+
+	SDL_DestroyTexture(texture);
+	// ctrl + shift + space to show parameter hints on VS
+	SDL_RenderPresent(renderer);
+	// SDL is handling all the dirty OS APIs to create windows.
+
+}
+
 void Game::Run() {
+
+	Setup();
 	while (isRunning) {
 		ProcessInput();
 		Update();
@@ -81,19 +120,6 @@ void Game::ProcessInput() {
 
 }
 
-void Game::Update() {
-
-}
-
-void Game::Render() {
-	SDL_SetRenderDrawColor(renderer, 10, 0, 20, 100);
-	SDL_RenderClear(renderer);
-
-	// ctrl + shift + space to show parameter hints on VS
-	SDL_RenderPresent(renderer);
-	// SDL is handling all the dirty OS APIs to create windows.
-
-}
 
 void Game::Destroy() {
 	SDL_DestroyRenderer(renderer);

@@ -12,11 +12,13 @@ private:
 	bool isRunning;
 
 public:
+	// Public API that other classes can invoke/interact
 	Game();
 	~Game();
 	void Initialize();
 	void Run();
 	void ProcessInput();
+	void Setup();
 	void Update();
 	void Render();
 	void Destroy();
