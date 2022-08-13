@@ -7,6 +7,7 @@
 // scope resolution::contructor method
 Game::Game() {
 	std::cout << "Game Constructor called" << std::endl;
+	isRunning = false;
 }
 
 Game::~Game() {
@@ -35,11 +36,14 @@ void Game::Initialize() {
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	if (!renderer) {
 		std::cerr << "Error creating SDL renderer." << std::endl;
+		return;
 	}
+
+	isRunning = true;
 }
 
 void Game::Run() {
-	while (true) {
+	while (isRunning) {
 		ProcessInput();
 		Update();
 		Render();
@@ -48,6 +52,20 @@ void Game::Run() {
 }
 
 void Game::ProcessInput() {
+	SDL_Event sdlEvent; // pure struct
+	while (SDL_PollEvent(&sdlEvent)) { // passing reference of the full struct
+	// if you sent the entire struct, the function copies it and that is inefficient
+		switch (sdlEvent.type) {
+			case SDL_QUIT: // event that system triggers when you click the close window button
+				isRunning = false;
+				break;
+			case SDL_KEYDOWN:
+				if (sdlEvent.key.keysym.sym == SDLK_ESCAPE) {
+					isRunning = false;
+				}
+				break;
+		}
+	}
 
 }
 
@@ -56,6 +74,12 @@ void Game::Update() {
 }
 
 void Game::Render() {
+	SDL_SetRenderDrawColor(renderer, 10, 0, 20, 100);
+	SDL_RenderClear(renderer);
+
+	// ctrl + shift + space to show parameter hints on VS
+	SDL_RenderPresent(renderer);
+	// SDL is handling all the dirty OS APIs to create windows.
 
 }
 
