@@ -20,7 +20,7 @@ void Game::Initialize() {
 	}
 
 	// instead of copying entire thing to memory, it only stores the address of the struct
-	SDL_Window* window = SDL_CreateWindow("Game made by the 2D Engine of Miha Stele",
+	window = SDL_CreateWindow("Game made by the 2D Engine of Miha Stele",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
 		800,
@@ -32,7 +32,7 @@ void Game::Initialize() {
 		return;
 	}
 
-	SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+	renderer = SDL_CreateRenderer(window, -1, 0);
 	if (!renderer) {
 		std::cerr << "Error creating SDL renderer." << std::endl;
 	}
@@ -60,5 +60,7 @@ void Game::Render() {
 }
 
 void Game::Destroy() {
-
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit(); // opposite of SDL init
 }
