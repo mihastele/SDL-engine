@@ -7,12 +7,19 @@
 #include <imgui/imgui.h>
 #include <sol/sol.hpp>
 
-int main(int argc, char* argv[]) {
+#include "Game.h"
 
-    sol::state lua;
-    lua.open_libraries(sol::lib::base);
-    glm::vec2 velocity = glm::vec2(1.2, 3.4);
-    SDL_Init(SDL_INIT_EVERYTHING);
-    std::cout << "Hello, world!" << std::endl;
+// int argc, char* argv[] is required on Windows!
+int main(int argc, char* argv[]) {
+    // TODO: Do some magic!
+
+    // since we are not using "new" keyword, this object will be stored in stack and will be destroyed when the scope ends
+    Game game;
+
+    game.Initialize();
+    game.Run();
+    game.Destroy();
+
+
     return 0;
 }
