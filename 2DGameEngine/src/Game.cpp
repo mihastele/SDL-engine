@@ -20,12 +20,20 @@ void Game::Initialize() {
 		return;
 	}
 
+	// C style of doing stuff :P
+	SDL_DisplayMode displayMode;
+	// populating structs data by passing it by reference, so the function modifies it
+	SDL_GetCurrentDisplayMode(0, &displayMode);
+	// properties populated, so now we can access them
+	windowWidth = displayMode.w;
+	windowHeight = displayMode.h;
+
 	// instead of copying entire thing to memory, it only stores the address of the struct
 	window = SDL_CreateWindow("Game made by the 2D Engine of Miha Stele",
 		SDL_WINDOWPOS_CENTERED,
 		SDL_WINDOWPOS_CENTERED,
-		800,
-		600,
+		windowWidth,
+		windowHeight,
 		SDL_WINDOW_BORDERLESS);
 
 	if (!window) {
