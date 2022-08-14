@@ -1,6 +1,7 @@
 
 // include with "" is looking in the local folder, <> (angle brackets) look in the OS include folders
 #include "Game.h" // sibling file in this folder
+#include "Logger.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -8,17 +9,18 @@
 
 // scope resolution::contructor method
 Game::Game() {
-	std::cout << "Game Constructor called" << std::endl;
+	Logger::Log("Game Constructor called");
 	isRunning = false;
 }
 
 Game::~Game() {
-
+	// for professional logging, please use libraries rather than this simple handmade implementation
+	Logger::Log("Game Destructor called");
 }
 
 void Game::Initialize() {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-		std::cerr << "Error Initilaizing SDL" << std::endl;
+		Logger::Err("Error Initilaizing SDL");
 		return;
 	}
 
@@ -43,13 +45,13 @@ void Game::Initialize() {
 		SDL_WINDOW_BORDERLESS);
 
 	if (!window) {
-		std::cerr << "Error creating SDL window." << std::endl;
+		Logger::Err("Error creating SDL window.");
 		return;
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	if (!renderer) {
-		std::cerr << "Error creating SDL renderer." << std::endl;
+		Logger::Err("Error creating SDL renderer.");
 		return;
 	}
 
