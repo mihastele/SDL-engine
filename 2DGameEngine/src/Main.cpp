@@ -7,7 +7,7 @@
 #include <imgui/imgui.h>
 #include <sol/sol.hpp>
 
-#include "Game.h"
+#include "Game/Game.h"
 
 // int argc, char* argv[] is required on Windows!
 int main(int argc, char* argv[]) {

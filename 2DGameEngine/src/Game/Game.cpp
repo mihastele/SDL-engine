@@ -1,7 +1,7 @@
 
 // include with "" is looking in the local folder, <> (angle brackets) look in the OS include folders
 #include "Game.h" // sibling file in this folder
-#include "Logger.h"
+#include "../Logger/Logger.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
