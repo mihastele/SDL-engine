@@ -69,6 +69,21 @@ void Game::Setup() {
 }
 
 void Game::Update() {
+	// TODO: if we are too fast, we free processing power for other processes until we reach MILISECONDS_PER_FRAME
+
+	// Don't use the commented version, it wastes CPU cycles since it doesn't share resources while sleeping in the loop
+	//while (!SDL_TICKS_PASSED(SDL_GetTicks(), milisecondsPreviousFrame + MILISECONDS_PER_FRAME));
+
+	int timeToWait = MILISECONDS_PER_FRAME - (SDL_GetTicks() - milisecondsPreviousFrame);
+
+	if (timeToWait > 0 && timeToWait <= MILISECONDS_PER_FRAME) { // checking for edge cases
+		SDL_Delay(timeToWait);
+	}
+
+	// Store the current frame time
+	int milisecondsPreviousFrame = SDL_GetTicks();
+
+
 	// velocity
 	playerPosition.x += playerVelocity.x;
 	playerPosition.y += playerVelocity.y;
@@ -92,7 +107,8 @@ void Game::Render() {
 		static_cast<int>(playerPosition.x),
 		static_cast<int>(playerPosition.y), 
 		32, 
-		32}; // Where we want to paste the picture
+		32
+	}; // Where we want to paste the picture
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect); // srcRect is null because we don't want a portion of the image
 
 	SDL_DestroyTexture(texture);
