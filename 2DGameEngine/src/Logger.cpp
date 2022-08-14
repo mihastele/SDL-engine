@@ -3,6 +3,9 @@
 #include <string>
 #include <chrono>
 #include <ctime>
+#include <time.h>
+
+std::vector<LogEntry> Logger::messages;
 
 std::string CurrentDateToString() {
 	std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
@@ -14,11 +17,20 @@ std::string CurrentDateToString() {
 }
 
 void Logger::Log(const std::string& message) {
-	std::string output = "LOG: [" + CurrentDateToString() + "]: " + message;
-	std::cout << "\x1B[32m" << output << "\033[0m" << std::endl;
+	LogEntry logEntry;
+	logEntry.type = LOG_INFO;
+	logEntry.message = "LOG: [" + CurrentDateToString() + "]: " + message;
+	// x1B[32m is a code to turn console text to green and \033[0m to reset the color
+	std::cout << "\x1B[32m" << logEntry.message << "\033[0m" << std::endl;
+
+	messages.push_back(logEntry);
 }
 
 void Logger::Err(const std::string& message) {
-	std::string output = "ERR: [" + CurrentDateToString() + "]: " + message;
-	std::cerr << "\x1B[91m" << output << "\033[0m" << std::endl;
+	LogEntry logEntry;
+	logEntry.type = LOG_INFO;
+	logEntry.message = "ERR: [" + CurrentDateToString() + "]: " + message;
+	std::cerr << "\x1B[91m" << logEntry.message << "\033[0m" << std::endl;
+
+	messages.push_back(logEntry);
 }
