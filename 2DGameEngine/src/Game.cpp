@@ -4,6 +4,7 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <glm/glm.hpp>
 
 // scope resolution::contructor method
 Game::Game() {
@@ -59,12 +60,18 @@ void Game::Initialize() {
 }
 
 
-void Game::Setup() {
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
 
+void Game::Setup() {
+	playerPosition = glm::vec2(10.0, 20.0);
+	playerVelocity = glm::vec2(1.0, 0.0);
 }
 
 void Game::Update() {
-
+	// velocity
+	playerPosition.x += playerVelocity.x;
+	playerPosition.y += playerVelocity.y;
 }
 
 void Game::Render() {
@@ -81,7 +88,11 @@ void Game::Render() {
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 	SDL_FreeSurface(surface);
 
-	SDL_Rect dstRect = {10, 10, 32, 32}; // Where we want to paste the picture
+	SDL_Rect dstRect = {
+		static_cast<int>(playerPosition.x),
+		static_cast<int>(playerPosition.y), 
+		32, 
+		32}; // Where we want to paste the picture
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect); // srcRect is null because we don't want a portion of the image
 
 	SDL_DestroyTexture(texture);
