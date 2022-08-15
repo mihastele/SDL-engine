@@ -2,6 +2,7 @@
 // include with "" is looking in the local folder, <> (angle brackets) look in the OS include folders
 #include "Game.h" // sibling file in this folder
 #include "../Logger/Logger.h"
+#include "../ECS/ECS.h"
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
@@ -66,8 +67,13 @@ glm::vec2 playerPosition;
 glm::vec2 playerVelocity;
 
 void Game::Setup() {
-	playerPosition = glm::vec2(10.0, 20.0);
-	playerVelocity = glm::vec2(10.0, 5.0);
+	// playerPosition = glm::vec2(10.0, 20.0);
+	// playerVelocity = glm::vec2(10.0, 5.0);
+
+	// Entity tank = registy.CreateEntity();
+	// tank.AddComponent<TransformerComponent>();
+	// tank.AddComponent<BoxColliderComponent>();
+	// tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
 }
 
 void Game::Update() {
@@ -90,15 +96,17 @@ void Game::Update() {
 
 
 	// velocity
-	playerPosition.x += playerVelocity.x * deltaTime;
-	playerPosition.y += playerVelocity.y * deltaTime;
+	// playerPosition.x += playerVelocity.x * deltaTime;
+	// playerPosition.y += playerVelocity.y * deltaTime;
+
+	//TODO:
 }
 
 void Game::Render() {
 	SDL_SetRenderDrawColor(renderer, 21, 21, 21, 255);
 	SDL_RenderClear(renderer);
 
-
+	/*
 	// SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 	// SDL_Rect player = { 10, 10, 20, 20 };
 	// SDL_RenderFillRect(renderer, &player);
@@ -117,6 +125,11 @@ void Game::Render() {
 	SDL_RenderCopy(renderer, texture, NULL, &dstRect); // srcRect is null because we don't want a portion of the image
 
 	SDL_DestroyTexture(texture);
+	*/
+
+	//TODO: Render gamre objects
+
+
 	// ctrl + shift + space to show parameter hints on VS
 	SDL_RenderPresent(renderer);
 	// SDL is handling all the dirty OS APIs to create windows.
