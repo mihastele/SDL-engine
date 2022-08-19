@@ -152,6 +152,8 @@ public:
 
 	void AddEntityToSystem(Entity entity);
 
+	template <typename T, typename ...TArgs> void AddComponent(Entity entity, TArgs&& ...args);
+
 	
 };
 
@@ -159,6 +161,34 @@ template <typename TComponent>
 void System::RequireComponent() {
 	const auto componentId = Component<TComponent>::GetId();
 	componentSignature.set(componentId);
+}
+
+
+
+template <typename TComponent, typename ...TArgs> void Registry::AddComponent(Entity entity, TArgs&& ...args) {
+	const auto componentId = Component<TComponent>::GetId();
+	const auto entityId = entity.GetId();
+
+	if (componentId >= componentPools.size()) {
+		componentPools.resize(componentId + 6, nullptr);
+	}
+
+	if (!componentPools(componentId)) {
+		Pool<TComponent> newComponentPool = new Pool<TComponent>();
+		componentPools[componentId] = newComponentPool;
+	}
+
+	Pool<TComponent> componentPool = Pool<TComponent>(componentPools[componentId]);
+
+	if (entityId >= componentPool->GetSize()) {
+		componentPool->Resize(numEntities);
+	}
+
+	TComponent newComponent(std::forward<TArgs>(args)...);
+
+	componentPool->Set(entityId, newComponent);
+
+	entityComponentSignatures[entityId].set(componentId);
 }
 
 #endif

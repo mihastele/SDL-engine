@@ -45,3 +45,4 @@ Entity Registry::CreateEntity() {
 void Registry::Update() {
 	
 }
+
