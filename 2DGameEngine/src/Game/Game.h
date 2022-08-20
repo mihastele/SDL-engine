@@ -4,6 +4,7 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "../ECS/ECS.h"
 #include<SDL.h>
 
 // C style  -> #define FPS 30
@@ -16,6 +17,8 @@ private:
 	SDL_Renderer* renderer;
 	bool isRunning;
 	int milisecondsPreviousFrame = 0;
+
+	std::unique_ptr<Registry> registry; // Registry* registry, but with memory management wrapper
 
 public:
 	// Public API that other classes can invoke/interact
