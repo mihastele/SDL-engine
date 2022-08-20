@@ -9,7 +9,9 @@
 #include <glm/glm.hpp>
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Components/SpriteComponent.h"
 #include "../Systems/MovementSystem.h"
+#include "../Systems/RenderSystem.h"
 
 // scope resolution::contructor method
 Game::Game() {
@@ -77,6 +79,7 @@ void Game::Setup() {
 	// playerVelocity = glm::vec2(10.0, 5.0);
 
 	registry->AddSystem<MovementSystem>();
+	registry->AddSystem<RenderSystem>();
 
 	Entity tank = registry->CreateEntity();
 	// Entity truck = registry->CreateEntity();
@@ -86,6 +89,7 @@ void Game::Setup() {
 	// registry->AddComponent<RigidBodyComponent>(tank, glm::vec2(50.0, 0.0));
 	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+	tank.AddComponent<SpriteComponent>(10, 10);
 
 	// tank.AddComponent<TransformerComponent>();
 	// tank.AddComponent<BoxColliderComponent>();
@@ -152,6 +156,7 @@ void Game::Render() {
 	//TODO: Render gamre objects
 
 
+	registry->GetSystem<RenderSystem>().Update(renderer);
 	// ctrl + shift + space to show parameter hints on VS
 	SDL_RenderPresent(renderer);
 	// SDL is handling all the dirty OS APIs to create windows.
