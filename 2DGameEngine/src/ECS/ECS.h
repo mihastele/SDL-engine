@@ -170,7 +170,7 @@ public:
 
 	template <typename TComponent> bool HasComponent(Entity entity) const;
 
-	template <typename TComponent> TComponent& GetComponent() const;
+	template <typename TComponent> TComponent& GetComponent(Entity entity) const;
 
 	template <typename TSystem, typename ...TArgs> void AddSystem(TArgs&& ...args);
 
@@ -237,6 +237,32 @@ template <typename TComponent> bool Registry::HasComponent(Entity entity) const 
 	const auto entityId = entity.GetId();
 
 	return entityComponentSignatures[entityId].test(componentId);
+}
+
+template <typename TComponent> TComponent& Registry::GetComponent(Entity entity) const {
+	const auto componentId = Component<TComponent>::GetId();
+	const auto entityId = entity.GetId();
+	auto componentPool = std::static_pointer_cast<Pool<TComponent>>(componentPools[componentId]);
+	return componentPool->Get(entityId);
+}
+
+template <typename TComponent, typename ...TArgs> void Entity::AddComponent(TArgs&& ...args) {
+	registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+	// Logger::Log("Component id = " + std::to_string(componentId) + "was added to " + std::to_string(entityId));
+}
+
+template <typename TComponent> void Entity::RemoveComponent() {
+	registry->RemoveComponent<TComponent>(*this);
+
+}
+
+// template functions and classes are not classes, they generate classes and functions according to sepcs.
+template <typename TComponent> bool Entity::HasComponent() const {
+	return registry->HasComponent<TComponent>(*this);
+}
+
+template <typename TComponent> TComponent& Entity::GetComponent() const {
+	return registry->GetComponent<TComponent>(*this);
 }
 
 
