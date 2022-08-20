@@ -26,7 +26,7 @@ protected:
 
 // Used to assign a unique id to componend type
 template<typename T>
-class Component: public IComponent{
+class Component : public IComponent {
 	// Returns the unique id of the Component<T>
 public:
 	static int GetId() {
@@ -52,6 +52,14 @@ public:
 	bool operator >= (const Entity& other) const { return id >= other.id; }
 	bool operator < (const Entity& other) const { return id < other.id; }
 	bool operator > (const Entity& other) const { return id > other.id; }
+
+	template <typename TComponent, typename ...TArgs> void AddComponent(TArgs&& ...args);
+	template <typename TComponent> void RemoveComponent();
+	template <typename TComponent> bool HasComponent() const;
+	template <typename TComponent> TComponent& GetComponent() const;
+
+	// Hold a pointer to the entity's owner registry
+	class Registry* registry; // we declare class to let compiler know it exists
 };
 
 class System {
@@ -62,7 +70,7 @@ private:
 public:
 	System() = default;
 	~System() = default;
-	
+
 	void AddEntityToSystem(Entity entity);
 	void RemoveEntityFromSystem(Entity entity);
 
@@ -78,12 +86,12 @@ public:
 class IPool {
 	// We don't want to specify the type class, that is why we made an inherited class (base class)
 public:
-	virtual ~IPool(){}
+	virtual ~IPool() {}
 };
 
 
 template <typename T>
-class Pool: public IPool {
+class Pool : public IPool {
 private:
 	std::vector<T> data;
 
@@ -162,19 +170,21 @@ public:
 
 	template <typename TComponent> bool HasComponent(Entity entity) const;
 
-	template<typename TSystem, typename ...TArgs> void AddSystem(TArgs&& ...args);
+	template <typename TComponent> TComponent& GetComponent() const;
 
-	template<typename TSystem> void RemoveSystem();
+	template <typename TSystem, typename ...TArgs> void AddSystem(TArgs&& ...args);
 
-	template<typename TSystem> bool HasSystem() const;
+	template <typename TSystem> void RemoveSystem();
 
-	template<typename TSystem> TSystem GetSystem() const;
+	template <typename TSystem> bool HasSystem() const;
+
+	template <typename TSystem> TSystem GetSystem() const;
 
 	// Checks the component signature of an entity and add the entity to the systems
 	// that are interested in it
 	void AddEntityToSystems(Entity entity);
 
-	
+
 };
 
 template <typename TComponent>
