@@ -9,6 +9,7 @@
 #include <glm/glm.hpp>
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
+#include "../Systems/MovementSystem.h"
 
 // scope resolution::contructor method
 Game::Game() {
@@ -75,6 +76,8 @@ void Game::Setup() {
 	// playerPosition = glm::vec2(10.0, 20.0);
 	// playerVelocity = glm::vec2(10.0, 5.0);
 
+	registry->AddSystem<MovementSystem>();
+
 	Entity tank = registry->CreateEntity();
 	// Entity truck = registry->CreateEntity();
 	 
@@ -101,7 +104,7 @@ void Game::Update() {
 		SDL_Delay(timeToWait);
 	}
 
-	// delta time is used for distande = delta(velocity) * delta(time) -> delta(time) == deltaTime
+	// delta time is used for distance = delta(velocity) * delta(time) -> delta(time) == deltaTime
 	double deltaTime = (SDL_GetTicks() - milisecondsPreviousFrame) / 1000.0;
 
 	// Store the current frame time
@@ -111,6 +114,12 @@ void Game::Update() {
 	// velocity
 	// playerPosition.x += playerVelocity.x * deltaTime;
 	// playerPosition.y += playerVelocity.y * deltaTime;
+
+	registry->GetSystem<MovementSystem>().Update(deltaTime);
+	// TODO: registry->GetSystem<CollisionSystem>().Update();
+	
+	// Update registry to process the entities that are waiting to be created/deleted
+	registry->Update();
 
 	//TODO:
 }
