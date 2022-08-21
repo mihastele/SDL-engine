@@ -5,6 +5,7 @@
 #define GAME_H
 
 #include "../ECS/ECS.h"
+#include "../AssetStore/AssetStore.h"
 #include<SDL.h>
 
 // C style  -> #define FPS 30
@@ -19,6 +20,7 @@ private:
 	int milisecondsPreviousFrame = 0;
 
 	std::unique_ptr<Registry> registry; // Registry* registry, but with memory management wrapper
+	std::unique_ptr<AssetStore> assetStore;
 
 public:
 	// Public API that other classes can invoke/interact
