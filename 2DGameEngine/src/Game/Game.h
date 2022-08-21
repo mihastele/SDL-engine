@@ -26,6 +26,7 @@ public:
 	// Public API that other classes can invoke/interact
 	Game();
 	~Game();
+	void LoadLevel(int level);
 	void Initialize();
 	void Run();
 	void ProcessInput();

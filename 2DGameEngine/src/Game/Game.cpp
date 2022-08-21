@@ -4,6 +4,7 @@
 #include "../Logger/Logger.h"
 #include "../ECS/ECS.h"
 #include <iostream>
+#include <fstream>
 #include <SDL.h>
 #include <SDL_image.h>
 #include <glm/glm.hpp>
@@ -72,10 +73,7 @@ void Game::Initialize() {
 }
 
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
-
-void Game::Setup() {
+void Game::LoadLevel(int level) {
 	// playerPosition = glm::vec2(10.0, 20.0);
 	// playerVelocity = glm::vec2(10.0, 5.0);
 
@@ -85,28 +83,71 @@ void Game::Setup() {
 
 	assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
+	assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
+
+	
+	// Entity truck = registry->CreateEntity();
+
+
+
+	// Load the tilemap
+	// We need to load the tilemap texture from ./assets/tilemaps/jungle.png
+	// We need to load the file ./assets/tilemaps/jungle.map (mapping of which tiles should be displayed from png)
+	// Tip: You can use the idea of the source rectangle
+	// Tip: Consider creating one entity per tile
+
+	double defaultEntityScale = 2.5;
+
+	int tileSize = 32;
+	double tileScale = 5.0;
+	int mapNumCols = 25;
+	int mapNumRows = 20;
+	std::fstream mapFile;
+	mapFile.open("./assets/tilemaps/jungle.map");
+
+	for (int y = 0; y < mapNumRows; y++) {
+		for (int x = 0; x < mapNumCols; x++) {
+			char ch;
+			mapFile.get(ch);
+			int srcRectY = std::atoi(&ch) * tileSize;
+			mapFile.get(ch);
+			int srcRectX = std::atoi(&ch) * tileSize;
+			mapFile.ignore(); // skip the comma
+
+			Entity tile = registry->CreateEntity();
+			tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
+			tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, srcRectX, srcRectY);
+
+		}
+	}
+
 
 	Entity tank = registry->CreateEntity();
-	// Entity truck = registry->CreateEntity();
-	 
-	
+
 	// registry->AddComponent<TransformComponent>(tank, glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	// registry->AddComponent<RigidBodyComponent>(tank, glm::vec2(50.0, 0.0));
-	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
+	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
 	tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
 	// tank.AddComponent<SpriteComponent>(10, 10);
-	tank.AddComponent<SpriteComponent>("tank-image", 10, 10);
+	tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
 
 	Entity truck = registry->CreateEntity();
 
-	truck.AddComponent<TransformComponent>(glm::vec2(100.0, 300.0), glm::vec2(1.0, 1.0), 0.0);
+	truck.AddComponent<TransformComponent>(glm::vec2(100.0, 300.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
 	truck.AddComponent<RigidBodyComponent>(glm::vec2(-10.0, -10.0));
 	// truck.AddComponent<SpriteComponent>(10, 10);
-	truck.AddComponent<SpriteComponent>("truck-image", 10, 10);
-	
+	truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
+
 	// tank.AddComponent<TransformerComponent>();
 	// tank.AddComponent<BoxColliderComponent>();
 	// tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
+}
+
+// glm::vec2 playerPosition;
+// glm::vec2 playerVelocity;
+
+void Game::Setup() {
+	LoadLevel(1);
 }
 
 void Game::Update() {
@@ -169,7 +210,7 @@ void Game::Render() {
 	//TODO: Render gamre objects
 
 
-	registry->GetSystem<RenderSystem>().Update(renderer);
+	registry->GetSystem<RenderSystem>().Update(renderer, assetStore);
 	// ctrl + shift + space to show parameter hints on VS
 	SDL_RenderPresent(renderer);
 	// SDL is handling all the dirty OS APIs to create windows.
