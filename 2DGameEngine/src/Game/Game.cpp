@@ -11,8 +11,10 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
+#include "../Components/AnimationComponent.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
+#include "../Systems/AnimationSystem.h"
 
 // scope resolution::contructor method
 Game::Game() {
@@ -79,10 +81,12 @@ void Game::LoadLevel(int level) {
 
 	registry->AddSystem<MovementSystem>();
 	registry->AddSystem<RenderSystem>();
+	registry->AddSystem<AnimationSystem>();
 
 
 	assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
+	assetStore->AddTexture(renderer, "chopper-image", "./assets/images/chopper.png");
 	assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
 
 	
@@ -116,27 +120,35 @@ void Game::LoadLevel(int level) {
 
 			Entity tile = registry->CreateEntity();
 			tile.AddComponent<TransformComponent>(glm::vec2(x * (tileScale * tileSize), y * (tileScale * tileSize)), glm::vec2(tileScale, tileScale), 0.0);
-			tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, srcRectX, srcRectY);
+			tile.AddComponent<SpriteComponent>("tilemap-image", tileSize, tileSize, 0, srcRectX, srcRectY);
 
 		}
 	}
 
 
-	Entity tank = registry->CreateEntity();
+	Entity choppah = registry->CreateEntity();
+
+	choppah.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
+	choppah.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+	choppah.AddComponent<SpriteComponent>("chopper-image", 32, 32, 2);
+	choppah.AddComponent<AnimationComponent>(2, 10);
+
+
+	/////////Entity tank = registry->CreateEntity();
 
 	// registry->AddComponent<TransformComponent>(tank, glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	// registry->AddComponent<RigidBodyComponent>(tank, glm::vec2(50.0, 0.0));
-	tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
-	tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
+	/////////tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
+	/////////tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
 	// tank.AddComponent<SpriteComponent>(10, 10);
-	tank.AddComponent<SpriteComponent>("tank-image", 32, 32);
+	/////////tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
 
-	Entity truck = registry->CreateEntity();
+	/////////Entity truck = registry->CreateEntity();
 
-	truck.AddComponent<TransformComponent>(glm::vec2(100.0, 300.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
-	truck.AddComponent<RigidBodyComponent>(glm::vec2(-10.0, -10.0));
+	/////////truck.AddComponent<TransformComponent>(glm::vec2(20.0, 35.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
+	/////////truck.AddComponent<RigidBodyComponent>(glm::vec2(-10.0, -10.0));
 	// truck.AddComponent<SpriteComponent>(10, 10);
-	truck.AddComponent<SpriteComponent>("truck-image", 32, 32);
+	/////////truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
 
 	// tank.AddComponent<TransformerComponent>();
 	// tank.AddComponent<BoxColliderComponent>();
@@ -174,6 +186,7 @@ void Game::Update() {
 	// playerPosition.y += playerVelocity.y * deltaTime;
 
 	registry->GetSystem<MovementSystem>().Update(deltaTime);
+	registry->GetSystem<AnimationSystem>().Update();
 	// TODO: registry->GetSystem<CollisionSystem>().Update();
 	
 	// Update registry to process the entities that are waiting to be created/deleted

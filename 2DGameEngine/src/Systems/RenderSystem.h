@@ -9,6 +9,7 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/SpriteComponent.h"
 #include <SDL.h>
+#include <algorithm>
 
 class RenderSystem : public System {
 public:
@@ -19,6 +20,28 @@ public:
 	}
 
 	void Update(SDL_Renderer* renderer, std::unique_ptr<AssetStore>& assetStore) {
+		// TODO sort entities by the z-index (this is unoptimal in update for large amount of entities)
+
+
+		struct RenderableEntity {
+			TransformComponent transformComponent;
+			SpriteComponent spriteComponent;
+		};
+		std::vector<RenderableEntity> renderableEntities;
+		for (auto entity : GetSystemEntities()) {
+			RenderableEntity renderableEntity;
+			renderableEntity.spriteComponent = entity.GetComponent<SpriteComponent>();
+			renderableEntity.transformComponent = entity.GetComponent<TransformComponent>();
+
+			renderableEntities.emplace_back(renderableEntity);
+		}
+
+		// sort the vector by the z-index value
+		std::sort(renderableEntities.begin(), renderableEntities.end(), [](const RenderableEntity& a, const RenderableEntity& b) {
+			return a.spriteComponent.zIndex < b.spriteComponent.zIndex;
+			});
+
+
 		for (auto entity : GetSystemEntities()) {
 			const auto transform = entity.GetComponent<TransformComponent>();
 			const auto sprite = entity.GetComponent<SpriteComponent>();
