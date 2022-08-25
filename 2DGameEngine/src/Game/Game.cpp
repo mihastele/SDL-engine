@@ -235,7 +235,10 @@ void Game::Render() {
 
 
 	registry->GetSystem<RenderSystem>().Update(renderer, assetStore);
-	registry->GetSystem<RenderColliderSystem>().Update(renderer);
+
+	if (isDebug) {
+		registry->GetSystem<RenderColliderSystem>().Update(renderer);
+	}
 	// ctrl + shift + space to show parameter hints on VS
 	SDL_RenderPresent(renderer);
 	// SDL is handling all the dirty OS APIs to create windows.
