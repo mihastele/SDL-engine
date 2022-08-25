@@ -28,12 +28,12 @@ public:
 				auto bCollider = entityB.GetComponent<BoxColliderComponent>();
 
 				bool collisionHappened = CheckAABBCollision(
-					aTransform.position.x,
-					aTransform.position.y,
+					aTransform.position.x + aCollider.offset.x,
+					aTransform.position.y + aCollider.offset.y,
 					aCollider.width,
 					aCollider.height,
-					bTransform.position.x,
-					bTransform.position.y,
+					bTransform.position.x + bCollider.offset.x,
+					bTransform.position.y + bCollider.offset.y,
 					bCollider.width,
 					bCollider.height
 				);
