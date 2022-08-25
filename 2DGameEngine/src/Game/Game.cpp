@@ -1,20 +1,22 @@
 
 // include with "" is looking in the local folder, <> (angle brackets) look in the OS include folders
-#include "Game.h" // sibling file in this folder
-#include "../Logger/Logger.h"
-#include "../ECS/ECS.h"
-#include <iostream>
 #include <fstream>
+#include <glm/glm.hpp>
+#include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
-#include <glm/glm.hpp>
-#include "../Components/TransformComponent.h"
+#include "../Components/AnimationComponent.h"
+#include "../Components/BoxColliderComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Components/SpriteComponent.h"
-#include "../Components/AnimationComponent.h"
+#include "../Components/TransformComponent.h"
+#include "../ECS/ECS.h"
+#include "../Logger/Logger.h"
+#include "../Systems/AnimationSystem.h"
+#include "../Systems/CollisionSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderSystem.h"
-#include "../Systems/AnimationSystem.h"
+#include "Game.h" // sibling file in this folder
 
 // scope resolution::contructor method
 Game::Game() {
@@ -87,6 +89,7 @@ void Game::LoadLevel(int level) {
 	assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
 	assetStore->AddTexture(renderer, "truck-image", "./assets/images/truck-ford-right.png");
 	assetStore->AddTexture(renderer, "chopper-image", "./assets/images/chopper.png");
+	assetStore->AddTexture(renderer, "radar-image", "./assets/images/radar.png");
 	assetStore->AddTexture(renderer, "tilemap-image", "./assets/tilemaps/jungle.png");
 
 	
@@ -133,26 +136,29 @@ void Game::LoadLevel(int level) {
 	choppah.AddComponent<SpriteComponent>("chopper-image", 32, 32, 2);
 	choppah.AddComponent<AnimationComponent>(2, 10);
 
+	Entity radar = registry->CreateEntity();
 
-	/////////Entity tank = registry->CreateEntity();
+	radar.AddComponent<TransformComponent>(glm::vec2(windowWidth - 74, 10.0), glm::vec2(1, 1), 0.0);
+	radar.AddComponent<RigidBodyComponent>(glm::vec2(0.0, 0.0));
+	radar.AddComponent<SpriteComponent>("radar-image", 64, 64, 2);
+	radar.AddComponent<AnimationComponent>(8, 8);
+
+
+	Entity tank = registry->CreateEntity();
 
 	// registry->AddComponent<TransformComponent>(tank, glm::vec2(10.0, 30.0), glm::vec2(1.0, 1.0), 0.0);
 	// registry->AddComponent<RigidBodyComponent>(tank, glm::vec2(50.0, 0.0));
-	/////////tank.AddComponent<TransformComponent>(glm::vec2(10.0, 30.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
-	/////////tank.AddComponent<RigidBodyComponent>(glm::vec2(50.0, 0.0));
-	// tank.AddComponent<SpriteComponent>(10, 10);
-	/////////tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
+	tank.AddComponent<TransformComponent>(glm::vec2(500.0, 10.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
+	tank.AddComponent<RigidBodyComponent>(glm::vec2(-20.0, 0.0));
+	tank.AddComponent<SpriteComponent>("tank-image", 32, 32, 2);
+	tank.AddComponent<BoxColliderComponent>(32, 32); // offset will be default
 
-	/////////Entity truck = registry->CreateEntity();
+	Entity truck = registry->CreateEntity();
 
-	/////////truck.AddComponent<TransformComponent>(glm::vec2(20.0, 35.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
-	/////////truck.AddComponent<RigidBodyComponent>(glm::vec2(-10.0, -10.0));
-	// truck.AddComponent<SpriteComponent>(10, 10);
-	/////////truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
-
-	// tank.AddComponent<TransformerComponent>();
-	// tank.AddComponent<BoxColliderComponent>();
-	// tank.AddComponent<SpriteComponent>("./assets/images/tank.png");
+	truck.AddComponent<TransformComponent>(glm::vec2(10.0, 10.0), glm::vec2(defaultEntityScale, defaultEntityScale), 0.0);
+	truck.AddComponent<RigidBodyComponent>(glm::vec2(20.0, 0.0));
+	truck.AddComponent<SpriteComponent>("truck-image", 32, 32, 1);
+	truck.AddComponent<BoxColliderComponent>(32, 32);
 }
 
 // glm::vec2 playerPosition;
@@ -187,6 +193,7 @@ void Game::Update() {
 
 	registry->GetSystem<MovementSystem>().Update(deltaTime);
 	registry->GetSystem<AnimationSystem>().Update();
+	registry->GetSystem<CollisionSystem>().Update();
 	// TODO: registry->GetSystem<CollisionSystem>().Update();
 	
 	// Update registry to process the entities that are waiting to be created/deleted
