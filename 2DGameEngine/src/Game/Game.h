@@ -17,6 +17,7 @@ private:
 	SDL_Window* window;
 	SDL_Renderer* renderer;
 	bool isRunning;
+	bool isDebug;
 	int milisecondsPreviousFrame = 0;
 
 	std::unique_ptr<Registry> registry; // Registry* registry, but with memory management wrapper
