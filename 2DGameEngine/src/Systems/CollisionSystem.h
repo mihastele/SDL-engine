@@ -18,11 +18,13 @@ public:
 		// Check if any of the BoxColliderComponents collide
 
 		auto entities = GetSystemEntities();
+
+
 		for (auto a = entities.begin(); a != entities.end(); a++) {
 			Entity entityA = *a;
 			auto aTransform = entityA.GetComponent<TransformComponent>();
 			auto aCollider = entityA.GetComponent<BoxColliderComponent>();
-			for (auto b = a++; b != entities.end(); b++) {
+			for (auto b = a+1; b != entities.end(); b++) {
 				Entity entityB = *b;
 				auto bTransform = entityB.GetComponent<TransformComponent>();
 				auto bCollider = entityB.GetComponent<BoxColliderComponent>();

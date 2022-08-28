@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <typeindex>
 #include <set>
+#include <deque>
 #include <memory>
 #include <string>
 #include "../Logger/Logger.h"
@@ -42,6 +43,7 @@ private:
 public:
 	Entity(int id) : id(id) {}; // you can initialize attributes them like so
 	Entity(const Entity& entity) = default;
+	void Kill();
 	int GetId() const;
 
 	// Operator overloading is like adding salt. Adding too much of it is not a good idea, use it with care
@@ -154,6 +156,9 @@ class Registry {
 	std::set<Entity> entitiesToBeAdded;
 	std::set<Entity> entitiesToBeKilled;
 
+	// list of previously removed and now free Ids to use
+	std::deque<int> freeIds;
+
 
 public:
 	Registry() = default;
@@ -164,25 +169,22 @@ public:
 
 	void AddEntityToSystem(Entity entity);
 
+	void KillEntity(Entity entity);
+
 	template <typename T, typename ...TArgs> void AddComponent(Entity entity, TArgs&& ...args);
-
 	template <typename TComponent> void RemoveComponent(Entity entity);
-
 	template <typename TComponent> bool HasComponent(Entity entity) const;
-
 	template <typename TComponent> TComponent& GetComponent(Entity entity) const;
 
 	template <typename TSystem, typename ...TArgs> void AddSystem(TArgs&& ...args);
-
 	template <typename TSystem> void RemoveSystem();
-
 	template <typename TSystem> bool HasSystem() const;
-
 	template <typename TSystem> TSystem GetSystem() const;
 
 	// Checks the component signature of an entity and add the entity to the systems
 	// that are interested in it
 	void AddEntityToSystems(Entity entity);
+	void RemoveEntityFromSystems(Entity entity);
 
 
 };
