@@ -30,8 +30,6 @@ void System::RemoveEntityFromSystem(Entity entity) {
 			return entity == other;
 		}
 	), entities.end());
-
-	bool hi = false;
 }
 
 std::vector<Entity> System::GetSystemEntities() const {
