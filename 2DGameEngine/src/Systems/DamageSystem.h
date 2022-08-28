@@ -19,7 +19,8 @@ public:
 	}
 
 	void onCollision(CollisionEvent& event) {
-
+		event.a.Kill();
+		event.b.Kill();
 	}
 
 	void Update() {
