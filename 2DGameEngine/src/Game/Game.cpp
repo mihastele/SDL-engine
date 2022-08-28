@@ -14,6 +14,7 @@
 #include "../Logger/Logger.h"
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/CollisionSystem.h"
+#include "../Systems/DamageSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/RenderColliderSystem.h"
 #include "../Systems/RenderSystem.h"
@@ -26,6 +27,7 @@ Game::Game() {
 
 	registry = std::make_unique<Registry>();
 	assetStore = std::make_unique<AssetStore>();
+	eventBus = std::make_unique<EventBus>();
 
 	Logger::Log("Game Constructor called");
 }
@@ -88,6 +90,7 @@ void Game::LoadLevel(int level) {
 	registry->AddSystem<AnimationSystem>();
 	registry->AddSystem<CollisionSystem>();
 	registry->AddSystem<RenderColliderSystem>();
+	registry->AddSystem<DamageSystem>();
 
 
 	assetStore->AddTexture(renderer, "tank-image", "./assets/images/tank-panther-right.png");
@@ -167,8 +170,6 @@ void Game::LoadLevel(int level) {
 	tank.Kill();
 }
 
-// glm::vec2 playerPosition;
-// glm::vec2 playerVelocity;
 
 void Game::Setup() {
 	LoadLevel(1);
@@ -193,19 +194,22 @@ void Game::Update() {
 	milisecondsPreviousFrame = SDL_GetTicks();
 
 
-	// velocity
-	// playerPosition.x += playerVelocity.x * deltaTime;
-	// playerPosition.y += playerVelocity.y * deltaTime;
+	// Reset all event handlers for the current Frame
+	eventBus->Reset();
 
-	registry->GetSystem<MovementSystem>().Update(deltaTime);
-	registry->GetSystem<AnimationSystem>().Update();
-	registry->GetSystem<CollisionSystem>().Update();
-	// TODO: registry->GetSystem<CollisionSystem>().Update();
-	
+
+	// Perform the subscription of the events for all systems
+	registry->GetSystem<DamageSystem>().SubscribeToEvents(eventBus);
+
+
 	// Update registry to process the entities that are waiting to be created/deleted
 	registry->Update();
 
-	//TODO:
+	registry->GetSystem<MovementSystem>().Update(deltaTime);
+	registry->GetSystem<AnimationSystem>().Update();
+	registry->GetSystem<CollisionSystem>().Update(eventBus);
+	// TODO: registry->GetSystem<CollisionSystem>().Update();
+	
 }
 
 void Game::Render() {

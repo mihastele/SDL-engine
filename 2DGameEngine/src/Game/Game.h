@@ -4,8 +4,9 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "../ECS/ECS.h"
 #include "../AssetStore/AssetStore.h"
+#include "../ECS/ECS.h"
+#include "../EventBus/EventBus.h"
 #include<SDL.h>
 
 // C style  -> #define FPS 30
@@ -22,6 +23,7 @@ private:
 
 	std::unique_ptr<Registry> registry; // Registry* registry, but with memory management wrapper
 	std::unique_ptr<AssetStore> assetStore;
+	std::unique_ptr<EventBus> eventBus;
 
 public:
 	// Public API that other classes can invoke/interact

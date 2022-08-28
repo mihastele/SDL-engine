@@ -3,9 +3,12 @@
 #ifndef COLLISIONSYSTEM_H
 #define COLLISIONSYSTEM_H
 
-#include "../ECS/ECS.h"
 #include "../Components/BoxColliderComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Events/CollisionEvent.h"
+#include "../ECS/ECS.h"
+#include "../EventBus/EventBus.h"
+
 
 class CollisionSystem : public System {
 public:
@@ -14,7 +17,7 @@ public:
 		RequireComponent<BoxColliderComponent>();
 	}
 
-	void Update() {
+	void Update(std::unique_ptr<EventBus>& eventBus) {
 		// Check if any of the BoxColliderComponents collide
 
 		auto entities = GetSystemEntities();
@@ -41,7 +44,7 @@ public:
 				);
 
 				if (collisionHappened) {
-					// TODO emit events
+					eventBus->EmitEvent<CollisionEvent>(entityA, entityB);
 				}
 			}
 		}
