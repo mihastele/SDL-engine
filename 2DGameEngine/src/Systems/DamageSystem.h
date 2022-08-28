@@ -15,10 +15,10 @@ public:
 	}
 
 	void SubscribeToEvents(std::unique_ptr<EventBus>& eventBus) {
-		eventBus->SubscribeToEvent<CollisionEvent>(this, &DamageSystem::onCollision);
+		eventBus->SubscribeToEvent<CollisionEvent>(this, &DamageSystem::OnCollision);
 	}
 
-	void onCollision(CollisionEvent& event) {
+	void OnCollision(CollisionEvent& event) {
 		event.a.Kill();
 		event.b.Kill();
 	}
